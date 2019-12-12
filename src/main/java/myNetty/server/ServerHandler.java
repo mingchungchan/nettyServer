@@ -6,23 +6,49 @@ import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelOutboundHandlerAdapter;
+import myNetty.protocol.RpcRequest;
+import myNetty.protocol.RpcResponse;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * 用来实现Server端接收和处理消息的逻辑
  */
 public class ServerHandler extends ChannelInboundHandlerAdapter {
+    final String impl = "Impl";
+
 
     //接受client发送的消息
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
+        RpcRequest request = (RpcRequest) msg;
+        RpcResponse response = new RpcResponse();
+        System.out.println(request.getClassName());
+        System.out.println(request.getMethodName());
+        System.out.println(request.getRequestId());
 
-        String recieved = (String) msg;
-        System.out.println("服务器接收到客户端消息：" + recieved);
-        ctx.writeAndFlush("你好，客户端");
-
-
+        //调用请求类的请求方法执行并返回执行结果
+        Object invoke = null;
+        try {
+//            Object requestBean = serviceMap.get(request.getClassName());
+            Class<?> requestClazz = Class.forName(request.getClassName()+impl);
+            Object requestBean=requestClazz.getConstructor().newInstance();
+            Method method = requestClazz.getMethod(request.getMethodName(), request.getParameterTypes());
+            invoke = method.invoke(requestBean, request.getParameters());
+            response.setRequestId(UUID.randomUUID().toString());
+            response.setData(invoke);
+            response.setStatus(1);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(0);
+            response.setRequestId(UUID.randomUUID().toString());
+        }
+        System.out.println(request+""+response);
+        //返回执行结果
+        ctx.writeAndFlush(response);
     }
 
     /**

@@ -5,8 +5,6 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
 import myNetty.annotation.RPCService;
 import myNetty.protocol.RpcDecoder;
 import myNetty.protocol.RpcEncoder;
@@ -18,14 +16,12 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class NettyServer implements ApplicationContextAware {
+public class RPCServer implements ApplicationContextAware {
     private Map<String,Object> serviceMap = new HashMap<String,Object>();
     private int port;
 
-    public NettyServer(int port) {
+    public RPCServer(int port) {
         this.port = port;
         bind();
     }
@@ -39,9 +35,6 @@ public class NettyServer implements ApplicationContextAware {
 
             bootstrap.group(boss, worker);
             bootstrap.channel(NioServerSocketChannel.class);
-            bootstrap.option(ChannelOption.SO_BACKLOG, 1024); // 连接数
-            bootstrap.option(ChannelOption.TCP_NODELAY, true); // 不延迟，消息立即发送
-            bootstrap.childOption(ChannelOption.SO_KEEPALIVE, true); // 长连接
             bootstrap.childHandler(new ChannelInitializer<SocketChannel>() {// 绑定客户端连接时候触发操作
                 @Override
                 protected void initChannel(SocketChannel socketChannel)
@@ -72,7 +65,7 @@ public class NettyServer implements ApplicationContextAware {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        new NettyServer(10086);
+        new RPCServer(10086);
     }
 
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {

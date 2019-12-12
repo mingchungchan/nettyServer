@@ -26,25 +26,16 @@ public class NettyClient extends SimpleChannelInboundHandler{
     public NettyClient(int port, String host) throws InterruptedException {
         this.port = port;
         this.host = host;
-        //start();
     }
 
-    public void send(RpcRequest request) {
-        channel.writeAndFlush(request);
-        //阻塞等待消息
-//        synchronized (NettyClient.class) {
-//            wait();
-//        }
-    }
-
-    public RpcResponse start() throws InterruptedException {
+    public RpcResponse start(RpcRequest request) throws InterruptedException {
 
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         try {
 
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.channel(NioSocketChannel.class);
-            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+//            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
             bootstrap.group(eventLoopGroup);
             bootstrap.remoteAddress(host, port);
             bootstrap.handler(new ChannelInitializer<SocketChannel>() {
@@ -54,7 +45,7 @@ public class NettyClient extends SimpleChannelInboundHandler{
                     socketChannel.pipeline()
                             .addLast(new RpcDecoder(RpcResponse.class))//解码
                             .addLast(new RpcEncoder(RpcRequest.class))//编码
-                            .addLast(this);
+                            .addLast(NettyClient.this);
 
                 }
             });
@@ -62,10 +53,9 @@ public class NettyClient extends SimpleChannelInboundHandler{
             if (channelFuture.isSuccess()) {
                 System.err.println("连接服务器成功");
                 channel = channelFuture.channel();
+                channel.writeAndFlush(request);
             }
-            synchronized (response){
-                response.wait();
-            }
+
             channelFuture.channel().closeFuture().sync();
         } finally {
             eventLoopGroup.shutdownGracefully();
@@ -80,6 +70,7 @@ public class NettyClient extends SimpleChannelInboundHandler{
 
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
         response = (RpcResponse) o;
-        //System.out.println(response.toString());
+        System.out.println(response.getData());
+        channelHandlerContext.channel().close();
     }
 }

@@ -26,10 +26,8 @@ public class RPCProxy {
                 request.setParameters(args);
                 request.setRequestId(UUID.randomUUID().toString());
                 request.setParameterTypes(method.getParameterTypes());
-                NettyClient client =new NettyClient(port,address);
-                RpcResponse response = client.start();
-                client.send(request);
-
+                RPCClient client =new RPCClient(port,address);
+                RpcResponse response = client.start(request);
                 if (response.getStatus()!=0){
                     throw new NoSuchMethodException();
                 }else{
