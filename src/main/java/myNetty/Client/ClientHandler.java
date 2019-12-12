@@ -4,28 +4,26 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.io.UnsupportedEncodingException;
 
-public class ClientHandler extends ChannelHandlerAdapter {
+public class ClientHandler extends ChannelInboundHandlerAdapter {
     private ByteBuf firstMessage;
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
-        byte[] data = "你好，服务器".getBytes();
-        firstMessage = Unpooled.buffer();
-        firstMessage.writeBytes(data);
-        ctx.writeAndFlush(firstMessage);
-        System.err.println("客户端发送消息:你好，服务器");
+
+        ctx.writeAndFlush("服务端，你好哦，嘻嘻嘻");
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg)
             throws Exception {
-        ByteBuf buf = (ByteBuf) msg;
-        String rev = getMessage(buf);
-        System.err.println("客户端收到服务器消息:" + rev);
+
+        System.out.println((String) msg);
     }
+
 
     private String getMessage(ByteBuf buf) {
         byte[] con = new byte[buf.readableBytes()];

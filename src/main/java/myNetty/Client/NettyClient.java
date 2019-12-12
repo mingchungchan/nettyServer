@@ -5,6 +5,8 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 public class NettyClient {
     /*
@@ -37,12 +39,17 @@ public class NettyClient {
                 @Override
                 protected void initChannel(SocketChannel socketChannel)
                         throws Exception {
-                    socketChannel.pipeline().addLast(new ClientHandler());
+                    socketChannel.pipeline()
+                            .addLast(new StringDecoder())
+                            .addLast(new StringEncoder())
+                            .addLast(new ClientHandler());
+
                 }
             });
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             if (channelFuture.isSuccess()) {
                 System.err.println("连接服务器成功");
+
             }
             channelFuture.channel().closeFuture().sync();
         } finally {

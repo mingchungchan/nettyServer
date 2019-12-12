@@ -4,27 +4,23 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
 
 import java.io.UnsupportedEncodingException;
 
 /**
  * 用来实现Server端接收和处理消息的逻辑
  */
-public class ServerHandler extends ChannelHandlerAdapter {
+public class ServerHandler extends ChannelInboundHandlerAdapter {
 
     //接受client发送的消息
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ByteBuf buf = (ByteBuf) msg;
-        String recieved = getMessage(buf);
-        System.err.println("服务器接收到客户端消息：" + recieved);
 
-        try {
-            ctx.writeAndFlush(getSendByteBuf("你好，客户端"));
-            System.err.println("服务器回复消息：你好，客户端");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
+        String recieved = (String) msg;
+        System.out.println("服务器接收到客户端消息：" + recieved);
+        ctx.writeAndFlush("你好，客户端");
 
 
     }
