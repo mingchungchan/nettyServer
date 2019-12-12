@@ -5,10 +5,12 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
+import myNetty.protocol.RpcDecoder;
+import myNetty.protocol.RpcEncoder;
+import myNetty.protocol.RpcRequest;
+import myNetty.protocol.RpcResponse;
 
-public class NettyClient {
+public class NettyClient extends SimpleChannelInboundHandler{
     /*
      * 服务器端口号
      */
@@ -18,14 +20,24 @@ public class NettyClient {
      * 服务器IP
      */
     private String host;
+    private volatile Channel channel;
+    private RpcResponse response;
 
     public NettyClient(int port, String host) throws InterruptedException {
         this.port = port;
         this.host = host;
-        start();
+        //start();
     }
 
-    private void start() throws InterruptedException {
+    public void send(RpcRequest request) {
+        channel.writeAndFlush(request);
+        //阻塞等待消息
+//        synchronized (NettyClient.class) {
+//            wait();
+//        }
+    }
+
+    public RpcResponse start() throws InterruptedException {
 
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         try {
@@ -40,25 +52,34 @@ public class NettyClient {
                 protected void initChannel(SocketChannel socketChannel)
                         throws Exception {
                     socketChannel.pipeline()
-                            .addLast(new StringDecoder())
-                            .addLast(new StringEncoder())
-                            .addLast(new ClientHandler());
+                            .addLast(new RpcDecoder(RpcResponse.class))//解码
+                            .addLast(new RpcEncoder(RpcRequest.class))//编码
+                            .addLast(this);
 
                 }
             });
             ChannelFuture channelFuture = bootstrap.connect(host, port).sync();
             if (channelFuture.isSuccess()) {
                 System.err.println("连接服务器成功");
-
+                channel = channelFuture.channel();
+            }
+            synchronized (response){
+                response.wait();
             }
             channelFuture.channel().closeFuture().sync();
         } finally {
             eventLoopGroup.shutdownGracefully();
         }
+        return response;
     }
 
     public static void main(String[] args) throws InterruptedException {
-        NettyClient client = new NettyClient(10086, "localhost");
+        new NettyClient(10086, "localhost");
 
+    }
+
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
+        response = (RpcResponse) o;
+        //System.out.println(response.toString());
     }
 }

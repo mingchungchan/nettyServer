@@ -1,24 +1,21 @@
 package myNetty.protocol;
 
-/*
- * @author uv
- * @date 2018/10/13 18:10
- * 传输响应对象
+/**
+ * 相应请求
  */
-
 public class RpcResponse {
 
-    private String id;
+    private String requestId;
     private Object data;
     // 0=success -1=fail
     private int status;
 
-    public String getId() {
-        return id;
+    public String getRequestId() {
+        return requestId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 
     public Object getData() {
@@ -35,10 +32,5 @@ public class RpcResponse {
 
     public void setStatus(int status) {
         this.status = status;
-    }
-
-    @Override
-    public String toString() {
-        return "RpcResponse{" + "id='" + id + '\'' + ", data=" + data + ", status=" + status + '}';
     }
 }

@@ -1,33 +1,53 @@
 package myNetty.protocol;
 
-/*
- * @author uv
- * @date 2018/10/13 18:10
- * 传输请求对象
+/**
+ * 客户端请求
  */
-
 public class RpcRequest {
 
-    private String id;
-    private Object data;
+    private String requestId;
+    private String className;
+    private String methodName;
+    private Class<?>[] parameterTypes;
+    private Object[] parameters;
 
-    public String getId() {
-        return id;
+    public String getRequestId() {
+        return requestId;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 
-    public Object getData() {
-        return data;
+    public String getClassName() {
+        return className;
     }
 
-    public void setData(Object data) {
-        this.data = data;
+    public void setClassName(String className) {
+        this.className = className;
     }
-    @Override
-    public String toString() {
-        return "RpcRequest{" + "id='" + id + '\'' + ", data=" + data + '}';
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
+    }
+
+    public Class<?>[] getParameterTypes() {
+        return parameterTypes;
+    }
+
+    public void setParameterTypes(Class<?>[] parameterTypes) {
+        this.parameterTypes = parameterTypes;
+    }
+
+    public Object[] getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Object[] parameters) {
+        this.parameters = parameters;
     }
 }
