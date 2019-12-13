@@ -10,7 +10,7 @@ import myNetty.protocol.RpcEncoder;
 import myNetty.protocol.RpcRequest;
 import myNetty.protocol.RpcResponse;
 
-public class NettyClientUseChannelInboundHandlerAdapter {
+public class RPCClient {
     /*
      * 服务器端口号
      */
@@ -21,29 +21,22 @@ public class NettyClientUseChannelInboundHandlerAdapter {
      */
     private String host;
     private volatile Channel channel;
+    private RpcResponse response;
 
-    public NettyClientUseChannelInboundHandlerAdapter(int port, String host) throws InterruptedException {
+    public RPCClient(int port, String host) throws InterruptedException {
         this.port = port;
         this.host = host;
-        start();
     }
 
-    public void send(RpcRequest request) {
-        channel.writeAndFlush(request);
-        //阻塞等待消息
-//        synchronized (NettyClient.class) {
-//            wait();
-//        }
-    }
 
-    private void start() throws InterruptedException {
+    public void start(RpcRequest request) throws InterruptedException {
 
         EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
         try {
 
             Bootstrap bootstrap = new Bootstrap();
             bootstrap.channel(NioSocketChannel.class);
-            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
+//            bootstrap.option(ChannelOption.SO_KEEPALIVE, true);
             bootstrap.group(eventLoopGroup);
             bootstrap.remoteAddress(host, port);
             bootstrap.handler(new ChannelInitializer<SocketChannel>() {
@@ -61,15 +54,13 @@ public class NettyClientUseChannelInboundHandlerAdapter {
             if (channelFuture.isSuccess()) {
                 System.err.println("连接服务器成功");
                 channel = channelFuture.channel();
+                channel.writeAndFlush(request);
             }
+
             channelFuture.channel().closeFuture().sync();
         } finally {
             eventLoopGroup.shutdownGracefully();
         }
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        new NettyClientUseChannelInboundHandlerAdapter(10086, "localhost");
-
-    }
 }

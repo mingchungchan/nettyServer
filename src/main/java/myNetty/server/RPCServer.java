@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContextAware;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RPCServer implements ApplicationContextAware {
+public class RPCServer {
     private Map<String,Object> serviceMap = new HashMap<String,Object>();
     private int port;
 
@@ -68,13 +68,4 @@ public class RPCServer implements ApplicationContextAware {
         new RPCServer(10086);
     }
 
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(RPCService.class);
-        for(Map.Entry<String,Object> entry :beansWithAnnotation.entrySet()){
-            String interfaceName = entry.getValue().getClass()
-                    .getAnnotation(RPCService.class).value();
-            serviceMap.put(interfaceName,entry.getValue());
-        }
-        bind();
-    }
 }
