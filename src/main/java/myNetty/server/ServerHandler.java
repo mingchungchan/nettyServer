@@ -26,9 +26,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         RpcRequest request = (RpcRequest) msg;
         RpcResponse response = new RpcResponse();
-        System.out.println(request.getClassName());
         System.out.println(request.getMethodName());
-        System.out.println(request.getRequestId());
 
         //调用请求类的请求方法执行并返回执行结果
         Object invoke = null;
@@ -46,7 +44,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             response.setStatus(0);
             response.setRequestId(UUID.randomUUID().toString());
         }
-        System.out.println(request+""+response);
         //返回执行结果
         ctx.writeAndFlush(response);
     }

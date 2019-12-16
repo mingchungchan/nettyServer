@@ -1,4 +1,4 @@
-package myNetty.Client;
+package myNetty.Client.old;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;

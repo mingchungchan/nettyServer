@@ -18,24 +18,21 @@ public class RPCProxy {
     }
 
     public <T>T proxy(Class<?> clazz){
-        System.out.println("33");
         return (T) Proxy.newProxyInstance(clazz.getClassLoader(), new Class<?>[] { clazz },
                 new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                System.out.println("111");
                 RpcRequest request = new RpcRequest();
                 request.setClassName(method.getDeclaringClass().getName());
                 request.setMethodName(method.getName());
                 request.setParameters(args);
                 request.setRequestId(UUID.randomUUID().toString());
                 request.setParameterTypes(method.getParameterTypes());
-                RPCClient client =new RPCClient(port,address);
+                NettyClient client =new NettyClient(port,address);
                 RpcResponse response = client.start(request);
-                System.out.println("22");
-                if (response.getStatus()!=0){
-                    throw new NoSuchMethodException();
+                if (response.getStatus()!=1){
+                    return 0;
                 }else{
-                    return response;
+                    return response.getData();
                 }
             }
         });

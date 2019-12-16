@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Start {
+public class ServerStart {
     public static void main(String[] args) {
 //        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("ApplicationContext.xml");
 

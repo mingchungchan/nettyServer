@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class NettyServer implements ApplicationContextAware {
+public class NettyServer {
     private Map<String,Object> serviceMap = new HashMap<String,Object>();
     private int port;
 
@@ -75,13 +75,4 @@ public class NettyServer implements ApplicationContextAware {
         new NettyServer(10086);
     }
 
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        Map<String, Object> beansWithAnnotation = applicationContext.getBeansWithAnnotation(RPCService.class);
-        for(Map.Entry<String,Object> entry :beansWithAnnotation.entrySet()){
-            String interfaceName = entry.getValue().getClass()
-                    .getAnnotation(RPCService.class).value();
-            serviceMap.put(interfaceName,entry.getValue());
-        }
-        bind();
-    }
 }

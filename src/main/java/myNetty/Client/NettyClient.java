@@ -70,7 +70,6 @@ public class NettyClient extends SimpleChannelInboundHandler{
 
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
         response = (RpcResponse) o;
-        System.out.println(response.getData());
         channelHandlerContext.channel().close();
     }
 }
