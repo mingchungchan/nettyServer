@@ -68,8 +68,11 @@ public class NettyClient extends SimpleChannelInboundHandler{
 
     }
 
+    //接受信息
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {
         response = (RpcResponse) o;
+        //断开连接
         channelHandlerContext.channel().close();
+
     }
 }
