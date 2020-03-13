@@ -21,6 +21,9 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * 创建netty服务端
+ */
 public class NettyServer {
     private Map<String,Object> serviceMap = new HashMap<String,Object>();
     private int port;
@@ -69,10 +72,6 @@ public class NettyServer {
             worker.shutdownGracefully();
         }
 
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        new NettyServer(10086);
     }
 
 }

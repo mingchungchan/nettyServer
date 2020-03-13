@@ -1,4 +1,4 @@
-package myNetty.Client;
+package myNetty.client;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -10,6 +10,9 @@ import myNetty.protocol.RpcEncoder;
 import myNetty.protocol.RpcRequest;
 import myNetty.protocol.RpcResponse;
 
+/**
+ * 消息接收逻辑处理 和 创建netty客户端
+ */
 public class NettyClient extends SimpleChannelInboundHandler{
     /*
      * 服务器端口号
@@ -63,10 +66,6 @@ public class NettyClient extends SimpleChannelInboundHandler{
         return response;
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        new NettyClient(10086, "localhost");
-
-    }
 
     //接受信息
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object o) throws Exception {

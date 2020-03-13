@@ -26,7 +26,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
         RpcRequest request = (RpcRequest) msg;
         RpcResponse response = new RpcResponse();
-        System.out.println(request.getMethodName());
 
         //调用请求类的请求方法执行并返回执行结果
         Object invoke = null;
@@ -74,7 +73,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     //通知处理器最后的channelRead()是当前批处理中的最后一条消息时调用
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("服务端接收数据完毕..");
+//        System.out.println("服务端接收数据完毕..");
         ctx.flush();
     }
 

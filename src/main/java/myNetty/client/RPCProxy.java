@@ -1,4 +1,4 @@
-package myNetty.Client;
+package myNetty.client;
 
 import myNetty.protocol.RpcRequest;
 import myNetty.protocol.RpcResponse;
@@ -27,6 +27,7 @@ public class RPCProxy {
                 request.setParameters(args);
                 request.setRequestId(UUID.randomUUID().toString());
                 request.setParameterTypes(method.getParameterTypes());
+                //连接server服务器，每调用一次，就连接一次server服务器
                 NettyClient client =new NettyClient(port,address);
                 RpcResponse response = client.start(request);
                 if (response.getStatus()!=1){

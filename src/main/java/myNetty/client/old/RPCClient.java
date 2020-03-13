@@ -1,11 +1,10 @@
-package myNetty.Client.old;
+package myNetty.client.old;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import myNetty.Client.old.ClientHandler;
 import myNetty.protocol.RpcDecoder;
 import myNetty.protocol.RpcEncoder;
 import myNetty.protocol.RpcRequest;
